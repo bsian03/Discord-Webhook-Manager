@@ -12,5 +12,5 @@ node_js:
   - 10
   - 11
   - 12
-install: yarn
+install: yarn run lint
 cache: yarn
