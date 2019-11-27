@@ -1,5 +1,5 @@
-const EventEmitter = require('events')
-const request = require('request-promise')
+const EventEmitter = require('events');
+const request = require('request-promise');
 
 /**
  * Discord Webhook Manager
@@ -20,36 +20,36 @@ class WebhookManager extends EventEmitter {
    * @param {number} joinInputLengths Maximum length of joined messages - if you don't want them joined, select 0. Default: 0
    */
   constructor(webhookID, webhookToken, format = { content: 'text' }, interval = 2000, joinInputLengths = 0) {
-    super()
-    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook Token')
-    if (interval < 0 || joinInputLengths < 0) throw new TypeError('`interval` and `joinInputLengths` parameter must be greater than or equal to 0')
-    this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`
-    this.format = format
-    this.interval = interval
-    this.joinInputLengths = joinInputLengths
+    super();
+    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook Token');
+    if (interval < 0 || joinInputLengths < 0) throw new TypeError('`interval` and `joinInputLengths` parameter must be greater than or equal to 0');
+    this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`;
+    this.format = format;
+    this.interval = interval;
+    this.joinInputLengths = joinInputLengths;
     /**
      * @type {string[]} Array of messages
      */
-    this.queue = []
+    this.queue = [];
     /**
      * @type {Date[]}
      */
-    this.rateLimiter = []
-    this.enabled = true
+    this.rateLimiter = [];
+    this.enabled = true;
 
-    setInterval(() => { this.rateLimiter = this.rateLimiter.filter((d) => new Date(Date.now() - 2000) < d) })
+    setInterval(() => { this.rateLimiter = this.rateLimiter.filter((d) => new Date(Date.now() - 2000) < d); });
 
     setInterval(async () => {
-      if (this.rateLimiter.length >= 30 || !this.queue) return
-      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0]))
+      if (this.rateLimiter.length >= 30 || !this.queue) return;
+      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0]));
       try {
         await request({
-          method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true
-        })
-        this.queue.shift()
+          method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
+        });
+        this.queue.shift();
       } catch (error) {
-        if (error.statusCode !== 429 && error.statusCode !== 500) this.rateLimiter.push(new Date())
-        let errorMessage = `${error.response.statusCode} ${error.response.statusMessage}: ${error.error.code || error.statusCode} - ${error.error.message}`
+        if (error.statusCode !== 429 && error.statusCode !== 500) this.rateLimiter.push(new Date());
+        let errorMessage = `${error.response.statusCode} ${error.response.statusMessage}: ${error.error.code || error.statusCode} - ${error.error.message}`;
         if (error.statusCode === 429) errorMessage += '\nRate limits are not working, please open an issue at https://gitlab.libraryofcode.org/engineering/webhook-manager';
         else if (error.statusCode === 401
           || error.statusCode === 403
@@ -57,10 +57,11 @@ class WebhookManager extends EventEmitter {
           errorMessage += '\nPlease try again with another webhook'
           + '\nFor more info regarding webhooks, please see https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks';
         }
-        return this.emit('error', [errorMessage, error])
+        this.emit('error', [errorMessage, error]);
+        return;
       }
-      this.rateLimiter.push(new Date())
-    }, this.interval)
+      this.rateLimiter.push(new Date());
+    }, this.interval);
   }
 
   /**
@@ -70,17 +71,17 @@ class WebhookManager extends EventEmitter {
    */
   addToQueue(message) {
     if (!this.joinInputLengths) {
-      const splitMessages = this.splitString(message)
-      splitMessages.forEach((m) => this.queue.push(m))
+      const splitMessages = this.splitString(message);
+      splitMessages.forEach((m) => this.queue.push(m));
     } else {
-      const splitMessages = message.split('\n')
+      const splitMessages = message.split('\n');
       splitMessages.forEach((m) => {
-        const lastInQueue = this.queue[this.queue.length - 1]
-        if (lastInQueue.length + m.length > this.joinInputLengths) this.queue.push(m)
-        else lastInQueue += `\n${m}`
-      })
+        const lastInQueue = this.queue[this.queue.length - 1];
+        if (lastInQueue.length + m.length > this.joinInputLengths) this.queue.push(m);
+        else this.queue[this.queue.length - 1] += `\n${m}`;
+      });
     }
-    return this.queue
+    return this.queue;
   }
 
   /**
@@ -88,8 +89,8 @@ class WebhookManager extends EventEmitter {
    * @returns {string[]} Empty queue
    */
   emptyQueue() {
-    this.queue = []
-    return this.queue
+    this.queue = [];
+    return this.queue;
   }
 
   /**
@@ -97,8 +98,8 @@ class WebhookManager extends EventEmitter {
    * @returns {Date[]} Empty rate limit
    */
   resetRateLimit() {
-    this.rateLimiter = []
-    return this.rateLimiter
+    this.rateLimiter = [];
+    return this.rateLimiter;
   }
 
   /**
@@ -108,8 +109,8 @@ class WebhookManager extends EventEmitter {
    * @returns {string} New Webhook URL
    */
   updateWebhook(webhookID, webhookToken) {
-    this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`
-    return this.url
+    this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`;
+    return this.url;
   }
 
   /**
@@ -117,8 +118,8 @@ class WebhookManager extends EventEmitter {
    * @returns {boolean} Enabled status
    */
   pauseWebhookSending() {
-    this.enabled = false
-    return this.enabled
+    this.enabled = false;
+    return this.enabled;
   }
 
   /**
@@ -126,8 +127,8 @@ class WebhookManager extends EventEmitter {
    * @returns {boolean} Enabled status
    */
   startWebhookSending() {
-    this.enabled = true
-    return this.enabled
+    this.enabled = true;
+    return this.enabled;
   }
 
   /**
@@ -135,9 +136,9 @@ class WebhookManager extends EventEmitter {
    * @returns {boolean} Enabled status
    */
   stopWebhookSending() {
-    this.enabled = false
-    this.queue = []
-    return this.enabled
+    this.enabled = false;
+    this.queue = [];
+    return this.enabled;
   }
 
   /**
@@ -146,19 +147,20 @@ class WebhookManager extends EventEmitter {
    * @private
    */
   splitString(message) {
-    const msgArray = []
-    let str = ''
+    const msgArray = [];
+    let str = '';
     let pos = 0;
-    const maxLength = this.joinInputLengths || 2000
+    const maxLength = this.joinInputLengths || 2000;
     while (message.length > 0) {
-      pos = message.length > maxLength ? message.lastIndexOf('\n', maxLength) : message.length
-      if (pos > maxLength) pos = maxLength
-      str = message.substring(0, pos)
-      message = message.substring(pos)
-      msgArray.push(str)
+      pos = message.length > maxLength ? message.lastIndexOf('\n', maxLength) : message.length;
+      if (pos > maxLength) pos = maxLength;
+      str = message.substring(0, pos);
+      // eslint-disable-next-line no-param-reassign
+      message = message.substring(pos);
+      msgArray.push(str);
     }
-    return msgArray
+    return msgArray;
   }
 }
 
-module.exports = WebhookManager
+module.exports = WebhookManager;
