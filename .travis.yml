@@ -1,6 +1,5 @@
-name: Travis CI
-on: [push]
 language: node_js
+os: linux
 before_install: 
   - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
   - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
