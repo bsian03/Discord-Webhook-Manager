@@ -13,4 +13,4 @@ node_js:
   - 11
   - 12
 install: yarn install && yarn run lint
-cache: yarn
+cache: yarn run lint
