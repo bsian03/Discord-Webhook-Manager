@@ -40,7 +40,7 @@ class WebhookManager extends EventEmitter {
     setInterval(() => { this.rateLimiter = this.rateLimiter.filter((d) => new Date(Date.now() - 2000) < d); });
 
     setInterval(async () => {
-      if (this.rateLimiter.length >= 30 || !this.queue) return;
+      if (this.rateLimiter.length >= 30 || !this.queue.length) return;
       const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0]));
       try {
         await request({

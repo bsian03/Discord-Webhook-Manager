@@ -1,6 +1,6 @@
 {
   "name": "discord-webhook-manager",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Discord Webhook Manager for Node.JS - Easily customisable webhook settings with webhook rate limits",
   "main": "index.js",
   "repository": "https://github.com/bsian03/Discord-Webhook-Manager.git",
@@ -14,6 +14,7 @@
     "webhook manager"
   ],
   "dependencies": {
+    "request": "^2.88.0",
     "request-promise": "^4.2.5"
   },
   "devDependencies": {
