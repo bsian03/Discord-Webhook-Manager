@@ -1,5 +1,7 @@
 # Webhook Manager
-A Discord Webhook Manager for Node.JS - Easily customisable webhook settings with webhook rate limits and let the manager send the webhooks for you!
+[![Build Status](https://travis-ci.com/bsian03/Discord-Webhook-Manager.svg?branch=master)](https://travis-ci.com/bsian03/Discord-Webhook-Manager) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bsian03/Discord-Webhook-Manager) ![GitHub issues](https://img.shields.io/github/issues/bsian03/Discord-Webhook-Manager) ![GitHub](https://img.shields.io/github/license/bsian03/Discord-Webhook-Manager) 
+
+A lightweight Discord Webhook Manager for Node.JS - Easily customisable webhook settings with webhook rate limits and let the manager send the webhooks for you!
 
 ## Installation
 Node 8+ is required for the webhook manager to work. Previous versions of Node.JS may work, however they will not be supported.
