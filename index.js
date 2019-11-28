@@ -41,7 +41,7 @@ class WebhookManager extends EventEmitter {
 
     setInterval(async () => {
       if (this.rateLimiter.length >= 30 || !this.queue.length) return;
-      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"')));
+      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"').replace(/\n/g, '\\n')));
       try {
         await request({
           method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
