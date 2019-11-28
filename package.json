@@ -6,6 +6,7 @@
   "repository": "https://github.com/bsian03/Discord-Webhook-Manager.git",
   "author": "Bsian <bsian@staff.libraryofcode.us>",
   "license": "MIT",
+  "keywords": ["discord", "discordapp", "webhook", "log", "webhook manager"],
   "dependencies": {
     "request-promise": "^4.2.5"
   },
