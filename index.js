@@ -21,7 +21,7 @@ class WebhookManager extends EventEmitter {
    */
   constructor(webhookID, webhookToken, format = { content: 'text' }, interval = 2000, joinInputLengths = 0) {
     super();
-    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook Token');
+    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook T/*  */oken');
     if (interval < 0 || joinInputLengths < 0) throw new TypeError('`interval` and `joinInputLengths` parameter must be greater than or equal to 0');
     this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`;
     this.format = format;
@@ -41,7 +41,7 @@ class WebhookManager extends EventEmitter {
 
     setInterval(async () => {
       if (this.rateLimiter.length >= 30 || !this.queue.length) return;
-      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0]));
+      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"')));
       try {
         await request({
           method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
