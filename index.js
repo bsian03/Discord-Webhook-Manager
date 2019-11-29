@@ -74,10 +74,10 @@ class WebhookManager extends EventEmitter {
       const splitMessages = this.splitString(message);
       splitMessages.forEach((m) => this.queue.push(m));
     } else {
-      const splitMessages = message.split('\n');
+      const splitMessages = message.split('\n').filter((a) => a);
       splitMessages.forEach((m) => {
         const lastInQueue = this.queue[this.queue.length - 1];
-        if (!lastInQueue || lastInQueue.length + m.length > this.joinInputLengths) this.queue.push(m);
+        if (!lastInQueue || lastInQueue.length + m.length + 1 > this.joinInputLengths) this.queue.push(m);
         else this.queue[this.queue.length - 1] += `\n${m}`;
       });
     }
