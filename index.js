@@ -50,7 +50,7 @@ class WebhookManager extends EventEmitter {
       } catch (error) {
         if (error.statusCode !== 429 && error.statusCode !== 500) this.rateLimiter.push(new Date());
         let errorMessage = `${error.response.statusCode} ${error.response.statusMessage}: ${error.error.code || error.statusCode} - ${error.error.message}`;
-        if (error.statusCode === 429) errorMessage += '\nRate limits are not working, please open an issue at https://gitlab.libraryofcode.org/engineering/webhook-manager';
+        if (error.statusCode === 429) errorMessage += '\nRate limits are not working, please open an issue at https://github.com/bsian03/Discord-Webhook-Manager';
         else if (error.statusCode === 401
           || error.statusCode === 403
           || error.statusCode === 404) {
@@ -74,10 +74,10 @@ class WebhookManager extends EventEmitter {
       const splitMessages = this.splitString(message);
       splitMessages.forEach((m) => this.queue.push(m));
     } else {
-      const splitMessages = message.split('\n');
+      const splitMessages = message.split('\n').filter((a) => a);
       splitMessages.forEach((m) => {
         const lastInQueue = this.queue[this.queue.length - 1];
-        if (!lastInQueue || lastInQueue.length + m.length > this.joinInputLengths) this.queue.push(m);
+        if (!lastInQueue || lastInQueue.length + m.length + 1 > this.joinInputLengths) this.queue.push(m);
         else this.queue[this.queue.length - 1] += `\n${m}`;
       });
     }
