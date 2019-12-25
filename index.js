@@ -40,27 +40,31 @@ class WebhookManager extends EventEmitter {
     setInterval(() => { this.rateLimiter = this.rateLimiter.filter((d) => new Date(Date.now() - 2000) < d); });
 
     setInterval(async () => {
-      if (this.rateLimiter.length >= 30 || !this.queue.length) return;
-      const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"').replace(/\n/g, '\\n')));
       try {
-        await request({
-          method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
-        });
-        this.queue.shift();
-      } catch (error) {
-        if (error.statusCode !== 429 && error.statusCode !== 500) this.rateLimiter.push(new Date());
-        let errorMessage = `${error.response.statusCode} ${error.response.statusMessage}: ${error.error.code || error.statusCode} - ${error.error.message}`;
-        if (error.statusCode === 429) errorMessage += '\nRate limits are not working, please open an issue at https://github.com/bsian03/Discord-Webhook-Manager';
-        else if (error.statusCode === 401
-          || error.statusCode === 403
-          || error.statusCode === 404) {
-          errorMessage += '\nPlease try again with another webhook'
-          + '\nFor more info regarding webhooks, please see https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks';
+        if (this.rateLimiter.length >= 30 || !this.queue.length) return;
+        const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"').replace(/\n/g, '\\n')));
+        try {
+          await request({
+            method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
+          });
+          this.queue.shift();
+        } catch (error) {
+          if (error.statusCode !== 429 && error.statusCode !== 500) this.rateLimiter.push(new Date());
+          let errorMessage = `${error.response.statusCode} ${error.response.statusMessage}: ${error.error.code || error.statusCode} - ${error.error.message}`;
+          if (error.statusCode === 429) errorMessage += '\nRate limits are not working, please open an issue at https://github.com/bsian03/Discord-Webhook-Manager';
+          else if (error.statusCode === 401
+            || error.statusCode === 403
+            || error.statusCode === 404) {
+            errorMessage += '\nPlease try again with another webhook'
+            + '\nFor more info regarding webhooks, please see https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks';
+          }
+          this.emit('error', [errorMessage, error]);
+          return;
         }
-        this.emit('error', [errorMessage, error]);
-        return;
+        this.rateLimiter.push(new Date());
+      } catch (error) {
+        this.emit('error', ['Unknown error occured', error]);
       }
-      this.rateLimiter.push(new Date());
     }, this.interval);
   }
 
