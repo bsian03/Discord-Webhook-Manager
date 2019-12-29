@@ -169,6 +169,7 @@ class WebhookManager extends EventEmitter {
   /**
    * Make message JSON compatible
    * @param {string} string Message to be JSON compatible
+   * @private
    */
   // eslint-disable-next-line class-methods-use-this
   escapeJSON(string) {
