@@ -42,7 +42,7 @@ class WebhookManager extends EventEmitter {
     setInterval(async () => {
       try {
         if (this.rateLimiter.length >= 30 || !this.queue.length) return;
-        const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.queue[0].replace(/"/g, '\\"').replace(/\n/g, '\\n')));
+        const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.escapeJSON(this.queue[0])));
         try {
           await request({
             method: 'POST', uri: this.url, body, json: true, resolveWithFullResponse: true,
@@ -164,6 +164,18 @@ class WebhookManager extends EventEmitter {
       msgArray.push(str);
     }
     return msgArray;
+  }
+
+  /**
+   * Make message JSON compatible
+   * @param {string} string Message to be JSON compatible
+   */
+  // eslint-disable-next-line class-methods-use-this
+  escapeJSON(string) {
+    return string.replace(/\b/g, '\\b').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
+      .replace(/\f/g, '\\f')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t');
   }
 }
 
