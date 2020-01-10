@@ -21,7 +21,7 @@ class WebhookManager extends EventEmitter {
    */
   constructor(webhookID, webhookToken, format = { content: 'text' }, interval = 2000, joinInputLengths = 0) {
     super();
-    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook T/*  */oken');
+    if (!webhookID || !webhookToken) throw new TypeError('Expected Webhook ID and Webhook Token');
     if (interval < 0 || joinInputLengths < 0) throw new TypeError('`interval` and `joinInputLengths` parameter must be greater than or equal to 0');
     this.url = `https://discordapp.com/api/webhooks/${webhookID}/${webhookToken}`;
     this.format = format;
@@ -41,7 +41,7 @@ class WebhookManager extends EventEmitter {
 
     setInterval(async () => {
       try {
-        if (this.rateLimiter.length >= 30 || !this.queue.length) return;
+        if (this.rateLimiter.length >= 30 || !this.queue.length || this.enabled) return;
         const body = JSON.parse(JSON.stringify(this.format).replace(/text/g, this.escapeJSON(this.queue[0])));
         try {
           await request({
@@ -63,7 +63,7 @@ class WebhookManager extends EventEmitter {
         }
         this.rateLimiter.push(new Date());
       } catch (error) {
-        this.emit('error', ['Unknown error occured', error]);
+        this.emit('error', 'Unknown error occured', error);
       }
     }, this.interval);
   }
@@ -173,7 +173,7 @@ class WebhookManager extends EventEmitter {
    */
   // eslint-disable-next-line class-methods-use-this
   escapeJSON(string) {
-    return string.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+    return string.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
   }
 }
 
