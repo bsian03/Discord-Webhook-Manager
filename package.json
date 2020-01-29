@@ -1,10 +1,10 @@
 {
   "name": "discord-webhook-manager",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A Discord Webhook Manager for Node.JS - Easily customisable webhook settings with webhook rate limits",
   "main": "index.js",
   "repository": "https://github.com/bsian03/Discord-Webhook-Manager.git",
-  "author": "Bsian <bsian@staff.libraryofcode.us>",
+  "author": "Bsian <bsian@staff.libraryofcode.org>",
   "license": "MIT",
   "keywords": [
     "discord",
